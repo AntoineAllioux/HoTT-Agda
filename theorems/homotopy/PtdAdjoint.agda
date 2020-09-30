@@ -278,7 +278,7 @@ module LeftAdjoint∨ {i j} {F : PtdFunctor i j} {G : PtdFunctor j i}
     module G = PtdFunctor G
     module A = HomAdjoint adj
 
-  module Into = ⊙WedgeRec (F.arr ⊙winl) (F.arr ⊙winr)
+  module Into = ⊙WedgeRec (F.arr {U} {U ⊙∨ V} ⊙winl) (F.arr ⊙winr)
 
   ⊙into : F.obj U ⊙∨ F.obj V ⊙→ F.obj (U ⊙∨ V)
   ⊙into = Into.⊙f

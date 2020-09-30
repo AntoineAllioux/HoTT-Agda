@@ -128,14 +128,14 @@ module _ {i} {G : Group i} where
                                    {u = embase*} {u' = embase*} {u'' = embase*}
                                    (λ= (emloop* g₁)) (λ= (emloop* g₂))
 
-      module M =
-        EM₁Level₁Elim
-          {P = λ x → B x → C x}
-          {{λ {y} → EM₁-prop-elim {P = λ x → has-level 1 (B x → C x)}
-                                     {{λ {x} → has-level-is-prop}}
-                                     (Π-level {B = λ _ → C embase} (λ _ → C-level)) y}}
-          embase*
-          emloop**
-          emloop-comp**
+    module M =
+      EM₁Level₁Elim
+        {P = λ x → B x → C x}
+        {{λ {y} → EM₁-prop-elim {P = λ x → has-level 1 (B x → C x)}
+                                   {{λ {x} → has-level-is-prop}}
+                                   (Π-level {B = λ _ → C embase} (λ _ → C-level)) y}}
+        embase*
+        emloop**
+        emloop-comp**
 
-      open M
+    open M public

@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import HoTT
 open import homotopy.HSpace renaming (HSpaceStructure to HSS)
@@ -164,7 +164,7 @@ module homotopy.Pi2HSusp {i} {X : Ptd i} {{_ : has-level 1 (de⊙ X)}}
     decode'-encode' {x} = Trunc-elim
       {P = λ tα → decode' {x} (encode' {x} tα) == tα}
       -- FIXME: Agda very slow (looping?) when omitting the next line
-      {{λ _ → =-preserves-level Trunc-level}}
+      {{=-preserves-level Trunc-level}}
       (J (λ y p → decode' {y} (encode' {y} [ p ]) == [ p ])
          (ap [_] (!-inv-r (merid e))))
 

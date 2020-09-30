@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import HoTT
 open import homotopy.HSpace
@@ -24,11 +24,13 @@ module EM₁HSpace {i} (G : AbGroup i) where
   mult-loop : G.El → (x : EM₁ G.grp) → x == x
   mult-loop g = EM₁-set-elim
     {P = λ x → x == x}
-    {{λ x → has-level-apply (EM₁-level₁ G.grp) x x}}
+    {{λ {x} → has-level-apply (EM₁-level₁ G.grp) x x}}
     (emloop g)
     (λ g' → ↓-idf=idf-in' (emloop-commutes g g' ∙ ∙=∙' (emloop g') (emloop g)))
 
   private
+    module M = homotopy.EilenbergMacLane1 (fst G) -- makes instances work
+
     EM₁-endo-Ω-group : Group i
     EM₁-endo-Ω-group = Ω^S-group 0 ⊙[ (EM₁ G.grp → EM₁ G.grp) , (λ x → x) ]
 
@@ -41,7 +43,7 @@ module EM₁HSpace {i} (G : AbGroup i) where
         pres-comp' g₁ g₂ =
           EM₁-prop-elim
             {P = λ x → mult-loop (G.comp g₁ g₂) x == mult-loop g₁ x ∙ mult-loop g₂ x}
-            {{λ x → has-level-apply (has-level-apply (EM₁-level₁ G.grp) _ _) _ _}}
+            {{has-level-apply (has-level-apply (EM₁-level₁ G.grp) _ _) _ _}}
             (emloop-comp g₁ g₂)
 
         pres-comp : (g₁ g₂ : G.El)
@@ -80,7 +82,7 @@ module EM₁HSpace {i} (G : AbGroup i) where
     unit-r : (x : EM₁ G.grp) → mult x embase == x
     unit-r = EM₁-set-elim
       {P = λ x → mult x embase == x}
-      {{λ x → has-level-apply (EM₁-level₁ G.grp) (mult x embase) x}}
+      {{λ {x} → has-level-apply (EM₁-level₁ G.grp) (mult x embase) x}}
       idp
       (λ g → ↓-app=idf-in $
          idp ∙' emloop g

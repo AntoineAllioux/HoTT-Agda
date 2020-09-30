@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import HoTT
 open import homotopy.HSpace renaming (HSpaceStructure to HSS)
@@ -30,8 +30,8 @@ module EMImplicit {i} {X : Ptd i} {{_ : is-connected 0 (de⊙ X)}}
   EM-level (S n) = Trunc-level
 
   instance
-    EM-conn : (n : ℕ) → is-connected ⟨ n ⟩ (EM (S n))
-    EM-conn n = Trunc-preserves-conn (⊙Susp^-conn' n)
+    EM-conn : {n : ℕ} → is-connected ⟨ n ⟩ (EM (S n))
+    EM-conn {n} = Trunc-preserves-conn (⊙Susp^-conn' n)
 
   {-
   π (S k) (EM (S n)) (embase (S n)) == π k (EM n) (embase n)
@@ -153,8 +153,8 @@ module EMImplicit {i} {X : Ptd i} {{_ : is-connected 0 (de⊙ X)}}
 
     private
       instance
-        sconn : (n : ℕ) → is-connected ⟨ S n ⟩ (de⊙ (⊙Susp^ (S n) X))
-        sconn n = ⊙Susp^-conn' (S n)
+        sconn : {n : ℕ} → is-connected ⟨ S n ⟩ (de⊙ (⊙Susp^ (S n) X))
+        sconn {n} = ⊙Susp^-conn' (S n)
 
       kle : (n : ℕ) → ⟨ S (S n) ⟩ ≤T ⟨ n ⟩ +2+ ⟨ n ⟩
       kle O = inl idp
@@ -183,7 +183,7 @@ module EMImplicit {i} {X : Ptd i} {{_ : is-connected 0 (de⊙ X)}}
 
 module EMExplicit {i} (G : AbGroup i) where
   module HSpace = EM₁HSpace G
-  open EMImplicit HSpace.H-⊙EM₁ public
+  open EMImplicit {{⟨⟩}} {{EM₁-level₁ (fst G)}} HSpace.H-⊙EM₁ public
 
   open BelowDiagonal public using (πS-below)
 
@@ -198,7 +198,7 @@ module _ {i j} {G : Group i} {H : Group j} (φ : G →ᴳ H) where
   private
     module φ = GroupHom φ
 
-    EM₁-fmap-hom : G →ᴳ Ω^S-group 0 (⊙EM₁ H)
+    EM₁-fmap-hom : G →ᴳ Ω^S-group 0 (⊙EM₁ H) {{EM₁-level₁ H}}
     EM₁-fmap-hom = group-hom f f-preserves-comp
       where
         f : Group.El G → embase' H == embase

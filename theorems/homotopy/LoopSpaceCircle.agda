@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import HoTT
 
@@ -255,7 +255,7 @@ abstract
                                          {{S¹Cover-is-set {y}}}
 
 S¹-level : has-level 1 S¹
-S¹-level = has-level-in (S¹-elim ⟨⟩ prop-has-all-paths-↓) where instance _ = ΩS¹-is-set
+S¹-level = has-level-in (S¹-elim (λ _ → ⟨⟩) prop-has-all-paths-↓) where instance _ = ΩS¹-is-set
 
 instance S¹-level-instance = S¹-level
 

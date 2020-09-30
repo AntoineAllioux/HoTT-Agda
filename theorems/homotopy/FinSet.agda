@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import HoTT
 import homotopy.ConstantToSetExtendsToProp as ConstExt
@@ -87,7 +87,7 @@ FinSet-econv = equiv to from to-from from-to
 
 FinSet-elim-prop : ∀ {j} {P : FinSet → Type j} (p : (A : FinSet) → has-level -1 (P A))
                    (d : (n : ℕ) → P (FinFS n)) → (A : FinSet) → P A
-FinSet-elim-prop {j} {P} p d (A , tz) = Trunc-elim ⦃ λ tw → p (A , tw) ⦄
+FinSet-elim-prop {j} {P} p d (A , tz) = Trunc-elim ⦃ λ {tw} → p (A , tw) ⦄
   (λ {(n , p) → transport P (FinSet= p) (d n)}) tz
 
 finset-has-dec-eq : (A : FinSet) → has-dec-eq (fst A)

@@ -102,7 +102,7 @@ module FreudenthalEquiv
   abstract
     encode-decodeN : (c : Codes north) → encode (decodeN c) == c
     encode-decodeN = Trunc-elim
-      {{λ _ → =-preserves-level Trunc-level}}
+      {{=-preserves-level Trunc-level}}
       (λ x →
         encode (decodeN [ x ])
           =⟨ idp ⟩
@@ -217,7 +217,7 @@ module FreudenthalEquiv
       STS : (x' : de⊙ X) (c : Codes north) →
         transport Q (merid x') (Trunc-fmap up c)
         == Trunc-fmap merid (transport Codes (merid x') c)
-      STS x' = Trunc-elim {{λ _ → =-preserves-level Trunc-level}}
+      STS x' = Trunc-elim {{=-preserves-level Trunc-level}}
                           (WedgeExt.ext STS-args x')
 
   abstract
@@ -225,7 +225,7 @@ module FreudenthalEquiv
       → decode {x} (encode {x} tα) == tα
     decode-encode {x} = Trunc-elim
       {P = λ tα → decode {x} (encode {x} tα) == tα}
-      {{λ _ → =-preserves-level Trunc-level}}
+      {{=-preserves-level Trunc-level}}
       (J (λ y p → decode {y} (encode {y} [ p ]) == [ p ])
          (ap [_] (!-inv-r (merid (pt X)))))
 
