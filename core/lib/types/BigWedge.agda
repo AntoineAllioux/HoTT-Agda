@@ -170,16 +170,23 @@ module _ {i j} {A : Type i} (dec : has-dec-eq A) {X : Ptd j} where
 
   abstract
     bwproj-bwin-diag : (a : A) → bwproj a ∘ bwin a ∼ idf (de⊙ X)
-    bwproj-bwin-diag a x with dec a a
-    ... | inl _ = idp
-    ... | inr a≠a with a≠a idp
-    ...           | ()
+    bwproj-bwin-diag a x = lemma
+      where
+        -- For some reason this is necessary to make type checking work with 2.6.1
+        lemma : fst (⊙bwproj-in a a) x == x
+        lemma with dec a a
+        ... | inl _ = idp
+        ... | inr a≠a with a≠a idp
+        ...           | ()
 
     bwproj-bwin-≠ : {a a' : A} → a ≠ a' → bwproj a ∘ bwin a' ∼ cst (pt X)
-    bwproj-bwin-≠ {a} {a'} a≠a' x with dec a a'
-    ... | inr _ = idp
-    ... | inl a=a' with a≠a' a=a'
-    ...            | ()
+    bwproj-bwin-≠ {a} {a'} a≠a' x = lemma
+      where
+        lemma : fst (⊙bwproj-in a a') x == pt X
+        lemma with dec a a'
+        ... | inr _ = idp
+        ... | inl a=a' with a≠a' a=a'
+        ...            | ()
 
 module _ {i j k} {A : Type i} (dec : has-dec-eq A) {X : Ptd j} (a : A) where
 
