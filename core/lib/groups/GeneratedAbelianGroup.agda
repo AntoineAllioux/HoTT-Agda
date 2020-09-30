@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.NType2
@@ -44,7 +44,7 @@ module GeneratedAbelianGroup (A : Type i) (R : Rel (Word A) m) where
           QuotWord-elim {P = λ b → grp.comp qw[ la ] b == grp.comp b qw[ la ]}
             (λ lb → quot-rel (qwr-rel (agr-commutes la lb)))
             (λ _ → prop-has-all-paths-↓))
-        (λ _ → prop-has-all-paths-↓ {{Π-level ⟨⟩}})
+        (λ _ → prop-has-all-paths-↓ {{Π-level (λ _ → ⟨⟩)}})
 
   rel-holds : ∀ {w₁} {w₂} (r : R w₁ w₂) → qw[ w₁ ] == qw[ w₂ ]
   rel-holds r = Gen.rel-holds (agr-rel r)

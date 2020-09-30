@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.Equivalence2
@@ -175,14 +175,23 @@ abstract
                      (from-transp is-equiv _ (prop-path is-equiv-is-prop _ _))))
 
 instance
-  ≃-level : ∀ {i j} {n : ℕ₋₂} {A : Type i} {B : Type j}
-    → (has-level n A → has-level n B → has-level n (A ≃ B))
-  ≃-level {n = ⟨-2⟩} = ≃-contr
-  ≃-level {n = S n} pA pB = Σ-level ⟨⟩ ⟨⟩ where instance _ = pA; _ = pB
+  ≃-level-instance : ∀ {i j} {n : ℕ₋₂} {A : Type i} {B : Type j}
+    → {{has-level n A}} → {{has-level n B}} → has-level n (A ≃ B)
+  ≃-level-instance {n = ⟨-2⟩} = ≃-contr ⟨⟩ ⟨⟩
+  ≃-level-instance {n = S n} = Σ-level-instance
 
-  universe-=-level : ∀ {i} {n : ℕ₋₂} {A B : Type i}
-    → (has-level n A → has-level n B → has-level n (A == B))
-  universe-=-level pA pB = equiv-preserves-level ua-equiv where instance _ = pA; _ = pB
+  universe-=-level-instance : ∀ {i} {n : ℕ₋₂} {A B : Type i}
+    → {{has-level n A}} → {{has-level n B}} → has-level n (A == B)
+  universe-=-level-instance = equiv-preserves-level ua-equiv
+
+≃-level : ∀ {i j} {n : ℕ₋₂} {A : Type i} {B : Type j}
+    → has-level n A → has-level n B → has-level n (A ≃ B)
+≃-level pA pB = ≃-level-instance where instance _ = pA ; _ = pB
+
+universe-=-level : ∀ {i} {n : ℕ₋₂} {A B : Type i}
+  → (has-level n A → has-level n B → has-level n (A == B))
+universe-=-level pA pB = universe-=-level-instance where instance _ = pA ; _ = pB
+
 
 module _ {i} {n} where
   private
@@ -214,13 +223,17 @@ module _ {i} {n} where
     nType-∙ = Subtype-∙ prop
 
 abstract
- instance
   _-Type-level_ : (n : ℕ₋₂) (i : ULevel)
     → has-level (S n) (n -Type i)
   (n -Type-level i) = has-level-in (λ { (A , pA) (B , pB) → aux A B pA pB}) where
     
     aux : (A B : Type i) (pA : has-level n A) (pB : has-level n B) → has-level n ((A , pA) == (B , pB))
     aux A B pA pB = equiv-preserves-level (nType=-econv (A , ⟨⟩) (B , ⟨⟩)) where instance _ = pA; _ = pB
+
+instance
+  Type-level-instance : {n : ℕ₋₂} {i : ULevel}
+    → has-level (S n) (n -Type i)
+  Type-level-instance {n} {i} = n -Type-level i
 
 hProp-is-set : (i : ULevel) → is-set (hProp i)
 hProp-is-set i = -1 -Type-level i

@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.Equivalence2
@@ -29,7 +29,7 @@ preserves-comp-prop : ∀ {i j} {A : Type i} {B : Type j}
   {{_ : is-set B}} (A-comp : A → A → A) (B-comp : B → B → B)
   → SubtypeProp (A → B) (lmax i j)
 preserves-comp-prop Ac Bc =
-  preserves-comp Ac Bc , ⟨⟩
+  preserves-comp Ac Bc , (λ _ → ⟨⟩)
 
 abstract
   ∼-preserves-preserves-comp : ∀ {i j} {A : Type i} {B : Type j}
@@ -280,8 +280,8 @@ module _ {i j} {G : Group i} {H : Group j} (φ : G →ᴳ H) where
       prop : H.El → Type (lmax i j)
       prop h = Trunc -1 (hfiber φ.f h)
 
-      level : (h : H.El) → is-prop (prop h)
-      level h = Trunc-level
+      level : {h : H.El} → is-prop (prop h)
+      level = Trunc-level
 
       abstract
         ident : prop H.ident

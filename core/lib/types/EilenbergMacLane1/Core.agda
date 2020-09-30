@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.NType2
@@ -70,7 +70,7 @@ module _ {G : Group i} where
       ap emloop (! $ G.unit-r G.ident) ∙ emloop-comp G.ident G.ident
 
   module EM₁Elim {j} {P : EM₁ G → Type j}
-    {{_ : (x : EM₁ G) → has-level 2 (P x)}}
+    {{_ : {x : EM₁ G} → has-level 2 (P x)}}
     (embase* : P embase)
     (emloop* : ∀ g → embase* == embase* [ P ↓ emloop g ])
     (emloop-comp* : ∀ g₁ g₂ →
@@ -107,7 +107,7 @@ module _ {G : Group i} where
   open EM₁Elim public using () renaming (f to EM₁-elim)
 
   module EM₁Level₁Elim {j} {P : EM₁ G → Type j}
-    {{is-1-type : (x : EM₁ G) → has-level 1 (P x)}}
+    {{is-1-type : {x : EM₁ G} → has-level 1 (P x)}}
     (embase* : P embase)
     (emloop* : (g : G.El) → embase* == embase* [ P ↓ emloop g ])
     (emloop-comp* : (g₁ g₂ : G.El) →
@@ -115,9 +115,9 @@ module _ {G : Group i} where
       [ (λ p → embase* == embase* [ P ↓ p ]) ↓ emloop-comp g₁ g₂ ]) where
 
     private
-      module M = EM₁Elim {{λ x → raise-level 1 (is-1-type x)}}
+      module M = EM₁Elim {{λ {x} → raise-level 1 (is-1-type {x}) }}
                          embase* emloop* emloop-comp*
-                         (λ g₁ g₂ g₃ → prop-has-all-paths-↓ {{↓-level (↓-level (is-1-type embase))}})
+                         (λ g₁ g₂ g₃ → prop-has-all-paths-↓ {{↓-level (↓-level (is-1-type {embase}))}})
     abstract
       f : Π (EM₁ G) P
       f = M.f
@@ -132,25 +132,25 @@ module _ {G : Group i} where
   open EM₁Level₁Elim public using () renaming (f to EM₁-level₁-elim)
 
   module EM₁SetElim {j} {P : EM₁ G → Type j}
-    {{is-set : (x : EM₁ G) → is-set (P x)}}
+    {{is-set : {x : EM₁ G} → is-set (P x)}}
     (embase* : P embase)
     (emloop* : (g : G.El) → embase* == embase* [ P ↓ emloop g ]) where
 
     private
-      module M = EM₁Level₁Elim {P = P} {{λ x → raise-level 0 (is-set x)}}
+      module M = EM₁Level₁Elim {P = P} {{λ {x} → raise-level 0 (is-set {x})}}
                                embase* emloop*
-                               (λ g₁ g₂ → set-↓-has-all-paths-↓ {{is-set embase}})
+                               (λ g₁ g₂ → set-↓-has-all-paths-↓ {{is-set {embase}}})
     open M public
 
   open EM₁SetElim public using () renaming (f to EM₁-set-elim)
 
   module EM₁PropElim {j} {P : EM₁ G → Type j}
-    {{is-prop : (x : EM₁ G) → is-prop (P x)}}
+    {{is-prop : {x : EM₁ G} → is-prop (P x)}}
     (embase* : P embase) where
 
-    module P = EM₁SetElim {{λ x → raise-level -1 (is-prop x)}}
+    module P = EM₁SetElim {{λ {x} → raise-level -1 (is-prop {x})}}
                           embase*
-                          (λ g → prop-has-all-paths-↓ {{is-prop embase}})
+                          (λ g → prop-has-all-paths-↓ {{is-prop {embase}}})
     open P public
 
   open EM₁PropElim public using () renaming (f to EM₁-prop-elim)
@@ -178,7 +178,7 @@ module _ {G : Group i} where
       EM₁-conn = has-level-in ([ embase ] , Trunc-elim
         (EM₁-level₁-elim
           {P = λ x → [ embase ] == [ x ]}
-          {{λ _ → raise-level _ (=-preserves-level Trunc-level)}}
+          {{raise-level _ (=-preserves-level Trunc-level)}}
           idp
           (λ _ → prop-has-all-paths-↓)
           (λ _ _ → set-↓-has-all-paths-↓)))

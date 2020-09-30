@@ -131,11 +131,11 @@ module _ {i} {G : Group i} where
       module M =
         EM₁Level₁Elim
           {P = λ x → B x → C x}
-          {{EM₁-prop-elim {P = λ x → has-level 1 (B x → C x)}
-                          {{λ x → has-level-is-prop}}
-                          (Π-level {B = λ _ → C embase} (λ _ → C-level))}}
+          {{λ {y} → EM₁-prop-elim {P = λ x → has-level 1 (B x → C x)}
+                                     {{λ {x} → has-level-is-prop}}
+                                     (Π-level {B = λ _ → C embase} (λ _ → C-level)) y}}
           embase*
           emloop**
           emloop-comp**
 
-      open M public
+      open M

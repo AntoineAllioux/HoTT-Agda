@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.NType2
@@ -323,7 +323,7 @@ module EM₁Rec' {j} {C : Type j}
           apd (λ p → *-to-**-path p ψ*) φ=ψ ▹
           ψ-step
 
-    module M = EM₁Elim {P = λ _ → C} {{λ _ → C-level}}
+    module M = EM₁Elim {P = λ _ → C} {{C-level}}
                        embase* emloop** emloop-comp** emloop-coh**
 
   abstract

@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.NConnected
@@ -111,7 +111,7 @@ module _ {i} {D : ℕ → Type i} (d : (n : ℕ) → D n → D (S n)) where
 {- If all Dₙ are m-connected, then the colim is m-connected -}
 
 ncolim-conn : ∀ {i} {D : ℕ → Type i} (d : (n : ℕ) → D n → D (S n)) (m : ℕ₋₂)
-  {{_ : (n : ℕ) → is-connected m (D n)}}
+  {{_ : {n : ℕ} → is-connected m (D n)}}
   → is-connected m (ℕColim d)
 ncolim-conn {D = D} d ⟨-2⟩ = -2-conn (ℕColim d)
 ncolim-conn {D = D} d (S m) {{cD}} =
@@ -119,9 +119,8 @@ ncolim-conn {D = D} d (S m) {{cD}} =
     (λ x → has-level-in ([ ncin O x ] ,
             (Trunc-elim $
               λ c → ap [_] (nc-match-=-base d x c) ∙ nc-match-=-point x c)))
-    (contr-center (cD O))
+    (contr-center cD)
   where
-  instance f = λ {n} → cD n
 
   nc-match-=-point : (x : D O) (c : ℕColim d)
     → [_] {n = S m} (nc-match d x c) == [ c ]

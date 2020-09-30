@@ -4,7 +4,7 @@ module lib.types.Types where
 
 open import lib.Basics
 open import lib.types.BAut public
-open import lib.types.BigWedge public
+-- open import lib.types.BigWedge public -- Not working with agda 2.6.1
 open import lib.types.Bool public
 open import lib.types.Choice public
 open import lib.types.Circle public

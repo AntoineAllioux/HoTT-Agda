@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.NType
@@ -66,8 +66,13 @@ module _ {i j k} (D : Cospan {i} {j} {k}) where
 module _ {i j k} (n : ℕ₋₂) {D : Cospan {i} {j} {k}} where
   open Cospan D
 
-  instance
-    pullback-level : has-level n A → has-level n B → has-level n C
+  pullback-level : has-level n A → has-level n B → has-level n C
+    → has-level n (Pullback D)
+  pullback-level pA pB pC =
+    equiv-preserves-level ((pullback-decomp-equiv D)⁻¹) where instance _ = pA; _ = pB; _ = pC
+
+instance
+  pullback-level-instance : {i j k : ULevel} {n : ℕ₋₂} {D : Cospan {i} {j} {k}} →
+    {{has-level n (Cospan.A D)}} → {{has-level n (Cospan.B D)}} → {{has-level n (Cospan.C D)}}
       → has-level n (Pullback D)
-    pullback-level pA pB pC =
-      equiv-preserves-level ((pullback-decomp-equiv D)⁻¹) where instance _ = pA; _ = pB; _ = pC
+  pullback-level-instance {n = n} {{pA}} {{pB}} {{pC}} = pullback-level n pA pB pC

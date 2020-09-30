@@ -113,7 +113,7 @@ module _ {i j} (G : Group i) (H : Group j) where
       module M =
         EM₁Level₁DoubleElim G H
           {P = λ x y → f₁ x y == f₂ x y}
-          {{λ x y → has-level-apply C-level _ _}}
+          {{has-level-apply C-level _ _}}
           embase-embase*
           (λ h → ↓-='-from-square (embase-emloop* h))
           (λ g → ↓-='-from-square (emloop-embase* g))

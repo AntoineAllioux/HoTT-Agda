@@ -18,10 +18,14 @@ lift-equiv = equiv lift lower (λ _ → idp) (λ _ → idp)
 
 -- [lower-equiv] is in Equivalences.agda
 
+Lift-level : ∀ {i j} {A : Type i} {n : ℕ₋₂}
+  → has-level n A → has-level n (Lift {j = j} A)
+Lift-level p = equiv-preserves-level lift-equiv {{p}}
+
 instance
-  Lift-level : ∀ {i j} {A : Type i} {n : ℕ₋₂}
-    → has-level n A → has-level n (Lift {j = j} A)
-  Lift-level p = equiv-preserves-level lift-equiv {{p}}
+  Lift-level-instance : ∀ {i j} {A : Type i} {n : ℕ₋₂}
+    → {{has-level n A}} → has-level n (Lift {j = j} A)
+  Lift-level-instance = Lift-level ⟨⟩
 
 ⊙lift-equiv : ∀ {i j} {X : Ptd i} → X ⊙≃ ⊙Lift {j = j} X
 ⊙lift-equiv = (⊙lift , snd lift-equiv)

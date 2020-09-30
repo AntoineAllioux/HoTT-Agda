@@ -79,7 +79,7 @@ module PushoutRecType {l} (left* : A → Type l) (right* : B → Type l)
     import lib.types.Flattening as Flattening
     module FlatteningPushout = Flattening
       (Coprod A B) C (inl ∘ g) (inr ∘ h) P-cc glue*
-    open FlatteningPushout public hiding (flattening-equiv; module P)
+    open FlatteningPushout hiding (flattening-equiv; module P)
 
     p-equiv : Pushout d ≃ G.T
     p-equiv = G.generic-pushout

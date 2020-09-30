@@ -33,7 +33,7 @@ module _ {i j} (G : Group i) (H : Group j) where
     module H = Group H
 
   module EM₁Level₁DoubleElim {k} {P : EM₁ G → EM₁ H → Type k}
-    {{P-level : ∀ x y → has-level 1 (P x y)}}
+    {{P-level : ∀ {x} {y} → has-level 1 (P x y)}}
     (embase-embase* : P embase embase)
     (embase-emloop* : ∀ h → embase-embase* == embase-embase* [ P embase ↓ emloop h ])
     (emloop-embase* : ∀ g → embase-embase* == embase-embase* [ (λ x → P x embase) ↓ emloop g ])
@@ -55,7 +55,7 @@ module _ {i j} (G : Group i) (H : Group j) where
     private
       module Embase =
         EM₁Level₁Elim {P = P embase}
-                      {{P-level embase}}
+                      {{P-level {embase}}}
                       embase-embase*
                       embase-emloop*
                       embase-emloop-comp*
@@ -64,7 +64,7 @@ module _ {i j} (G : Group i) (H : Group j) where
       P' p y = Embase.f y == Embase.f y [ (λ x → P x y) ↓ p ]
 
       P'-level : ∀ p y → has-level 0 (P' p y)
-      P'-level _ y = ↓-level (P-level embase y)
+      P'-level _ y = ↓-level (P-level {embase} {y})
 
       emloop-emloop** : ∀ g h → emloop-embase* g == emloop-embase* g [ P' (emloop g) ↓ emloop h ]
       emloop-emloop** g h =
@@ -86,7 +86,7 @@ module _ {i j} (G : Group i) (H : Group j) where
 
       module Emloop (g : G.El) =
         EM₁SetElim {P = P' (emloop g)}
-                   {{P'-level (emloop g)}}
+                   {{λ {x} → P'-level (emloop g) x}}
                    (emloop-embase* g)
                    (emloop-emloop** g)
 
@@ -94,12 +94,12 @@ module _ {i j} (G : Group i) (H : Group j) where
         EM₁PropElim {P = λ y → Emloop.f (G.comp g₁ g₂) y ==
                                Emloop.f g₁ y ∙ᵈ Emloop.f g₂ y
                                  [ (λ x → P' x y) ↓ emloop-comp g₁ g₂ ]}
-                    {{λ y → ↓-level (P'-level _ y)}}
+                    {{λ {y} → ↓-level (P'-level _ y)}}
                     (emloop-comp-embase* g₁ g₂)
 
       module DoubleElim (y : EM₁ H) =
         EM₁Level₁Elim {P = λ x → P x y}
-                      {{λ x → P-level x y}}
+                      {{λ {x} → P-level {x} {y}}}
                       (Embase.f y)
                       (λ g → Emloop.f g y)
                       (λ g₁ g₂ → EmloopComp.f g₁ g₂ y)

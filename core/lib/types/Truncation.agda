@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.types.TLevel
@@ -16,7 +16,7 @@ module _ {i} where
     instance Trunc-level : {n : ℕ₋₂} {A : Type i} → has-level n (Trunc n A)
 
   module TruncElim {n : ℕ₋₂} {A : Type i} {j} {P : Trunc n A → Type j}
-    {{p : (x : Trunc n A) → has-level n (P x)}} (d : (a : A) → P [ a ]) where
+    {{p : {x : Trunc n A} → has-level n (P x)}} (d : (a : A) → P [ a ]) where
 
     postulate  -- HIT
       f : Π (Trunc n A) P
@@ -29,7 +29,7 @@ module TruncRec {i j} {n : ℕ₋₂} {A : Type i} {B : Type j} {{p : has-level 
   (d : A → B) where
 
   private
-    module M = TruncElim {{λ x → p}} d
+    module M = TruncElim {{λ {x} → p}} d
 
   f : Trunc n A → B
   f = M.f
@@ -60,7 +60,7 @@ module TruncRecType {i j} {n : ℕ₋₂} {A : Type i} (d : A → n -Type j) whe
     to-from = Trunc-elim (λ _ → idp)
 
     from-to-aux : (a : Trunc (S n) A) (b : fst (f a)) → from (to-aux a b) == (a , b)
-    from-to-aux = Trunc-elim {{λ _ → Π-level (λ _ → =-preserves-level (Σ-level ⟨⟩ (λ x → raise-level _ (snd (f x)))))}}
+    from-to-aux = Trunc-elim {{Π-level (λ _ → =-preserves-level (Σ-level ⟨⟩ (λ x → raise-level _ (snd (f x)))))}}
                              (λ a b → idp)
 
     from-to : (x : Σ (Trunc (S n) A) (fst ∘ f)) → from (to x) == x
@@ -95,7 +95,7 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
   =ₜ-level a b = snd (Trunc= a b)
 
   =ₜ-refl : (a : Trunc (S n) A) → a =ₜ a
-  =ₜ-refl = Trunc-elim {{λ x → raise-level _ (=ₜ-level x x)}}
+  =ₜ-refl = Trunc-elim {{λ {x} → raise-level _ (=ₜ-level x x)}}
                        (λ a → [ idp ])
 
   =ₜ-equiv : (a b : Trunc (S n) A) → (a == b) ≃ (a =ₜ b)
@@ -114,8 +114,8 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
     to-from-aux a .a idp = idp
 
     to-from : (a b : Trunc (S n) A) (x : a =ₜ b) → to a b (from a b x) == x
-    to-from = Trunc-elim {{λ x → Π-level (λ y → Π-level (λ _ → =-preserves-level (raise-level _ (=ₜ-level x y))))}}
-              (λ a → Trunc-elim {{λ x → Π-level (λ _ → =-preserves-level (raise-level _ (=ₜ-level [ a ] x)))}}
+    to-from = Trunc-elim {{λ {x} → Π-level (λ y → Π-level (λ _ → =-preserves-level (raise-level _ (=ₜ-level x y))))}}
+              (λ a → Trunc-elim {{λ {x} → Π-level (λ _ → =-preserves-level (raise-level _ (=ₜ-level [ a ] x)))}}
               (λ b → Trunc-elim
               (to-from-aux a b)))
 
@@ -129,7 +129,7 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
       → ap (to ta tb) (from-to ta tb p) == to-from ta tb (to ta tb p)
     adj ta .ta idp =
       Trunc-elim {P = λ ta → ap (to ta ta) (from-to ta ta idp) == to-from ta ta (to ta ta idp)}
-                 {{λ x → =-preserves-level $ =-preserves-level $ raise-level _ $ =ₜ-level x x}}
+                 {{λ {x} → =-preserves-level $ =-preserves-level $ raise-level _ $ =ₜ-level x x}}
                  (λ _ → idp)
                  ta
 
@@ -161,9 +161,9 @@ Trunc-preserves-level {n = ⟨-2⟩} _ p = has-level-in
 Trunc-preserves-level ⟨-2⟩ _ = contr-has-level Trunc-level
 Trunc-preserves-level {n = (S n)} (S m) c = has-level-in (λ t₁ t₂ →
   Trunc-elim
-    {{λ s₁ → prop-has-level-S {A = has-level n (s₁ == t₂)} has-level-is-prop}}
+    {{λ {s₁} → prop-has-level-S {A = has-level n (s₁ == t₂)} has-level-is-prop}}
     (λ a₁ → Trunc-elim
-      {{λ s₂ → prop-has-level-S {A = has-level n ([ a₁ ] == s₂)} has-level-is-prop}}
+      {{λ {s₂} → prop-has-level-S {A = has-level n ([ a₁ ] == s₂)} has-level-is-prop}}
       (λ a₂ → equiv-preserves-level
       ((=ₜ-equiv [ a₁ ] [ a₂ ])⁻¹)
                {{Trunc-preserves-level {n = n} m (has-level-apply c a₁ a₂)}})
@@ -173,9 +173,9 @@ Trunc-preserves-level {n = (S n)} (S m) c = has-level-in (λ t₁ t₂ →
 {- an n-type is equivalent to its n-truncation -}
 unTrunc-equiv : ∀ {i} {n : ℕ₋₂} (A : Type i)
   {{_ : has-level n A}} → Trunc n A ≃ A
-unTrunc-equiv A = equiv f [_] (λ _ → idp) g-f where
-  f = Trunc-rec (idf _)
-  g-f = Trunc-elim (λ _ → idp)
+unTrunc-equiv A {{pA}} = equiv f [_] (λ _ → idp) g-f where
+  f = Trunc-rec {{pA}} (idf _)
+  g-f = Trunc-elim {{=-preserves-level Trunc-level}} (λ _ → idp)
 
 ⊙unTrunc-equiv : ∀ {i} {n : ℕ₋₂} (X : Ptd i)
   {{_ : has-level n (de⊙ X)}} → ⊙Trunc n X ⊙≃ X
@@ -227,11 +227,11 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
     → ta =ₜ tb → tb =ₜ tc → ta =ₜ tc
   _∙ₜ_ {ta = ta} {tb = tb} {tc = tc} =
     Trunc-elim {P = λ ta → C ta tb tc}
-      {{λ ta → level ta tb tc}}
+      {{λ {ta} → level ta tb tc}}
       (λ a → Trunc-elim {P = λ tb → C [ a ] tb tc}
-         {{λ tb → level [ a ] tb tc}}
+         {{λ {tb} → level [ a ] tb tc}}
          (λ b → Trunc-elim {P = λ tc → C [ a ] [ b ] tc}
-                  {{λ tc → level [ a ] [ b ] tc}}
+                  {{λ {tc} → level [ a ] [ b ] tc}}
                   (λ c → Trunc-fmap2 _∙_)
                   tc)
          tb)
@@ -249,22 +249,22 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
       == _∙ₜ_ {ta} tp (_∙ₜ_ {tb} tq tr)
   ∙ₜ-assoc {ta = ta} {tb = tb} {tc = tc} {td = td} =
     Trunc-elim {P = λ ta → C ta tb tc td}
-      {{λ ta → C-level ta tb tc td}}
+      {{λ {ta} → C-level ta tb tc td}}
       (λ a → Trunc-elim {P = λ tb → C [ a ] tb tc td}
-        {{λ tb → C-level [ a ] tb tc td}}
+        {{λ {tb} → C-level [ a ] tb tc td}}
         (λ b → Trunc-elim {P = λ tc → C [ a ] [ b ] tc td}
-          {{λ tc → C-level [ a ] [ b ] tc td}}
+          {{λ {tc} → C-level [ a ] [ b ] tc td}}
           (λ c → Trunc-elim {P = λ td → C [ a ] [ b ] [ c ] td}
-            {{λ td → C-level [ a ] [ b ] [ c ] td}}
+            {{λ {td} → C-level [ a ] [ b ] [ c ] td}}
             (λ d tp tq tr → Trunc-elim
               {P = λ tp → D [ a ] [ b ] [ c ] [ d ] tp tq tr}
-              {{λ tp → D-level [ a ] [ b ] [ c ] [ d ] tp tq tr}}
+              {{λ {tp} → D-level [ a ] [ b ] [ c ] [ d ] tp tq tr}}
               (λ p → Trunc-elim
                 {P = λ tq → D [ a ] [ b ] [ c ] [ d ] [ p ] tq tr}
-                {{λ tq → D-level [ a ] [ b ] [ c ] [ d ] [ p ] tq tr}}
+                {{λ {tq} → D-level [ a ] [ b ] [ c ] [ d ] [ p ] tq tr}}
                 (λ q → Trunc-elim
                   {P = λ tr → D [ a ] [ b ] [ c ] [ d ] [ p ] [ q ] tr}
-                  {{λ tr → D-level [ a ] [ b ] [ c ] [ d ] [ p ] [ q ] tr}}
+                  {{λ {tr} → D-level [ a ] [ b ] [ c ] [ d ] [ p ] [ q ] tr}}
                   (λ r → ap [_] (∙-assoc p q r))
                   tr)
                 tq)
@@ -334,18 +334,18 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
       core' idp idp r s = =ₛ-in idp
       core : ∀ ta tb tc td te → Q ta tb tc td te
       core ta tb tc td te =
-        Trunc-elim {P = λ ta → Q ta tb tc td te} {{λ ta → Q-level ta tb tc td te}} (λ a →
-          Trunc-elim {P = λ tb → Q [ a ] tb tc td te} {{λ tb → Q-level [ a ] tb tc td te}} (λ b →
-            Trunc-elim {P = λ tc → Q [ a ] [ b ] tc td te} {{λ tc → Q-level [ a ] [ b ] tc td te}} (λ c →
-              Trunc-elim {P = λ td → Q [ a ] [ b ] [ c ] td te} {{λ td → Q-level [ a ] [ b ] [ c ] td te}} (λ d →
-                Trunc-elim {P = λ te → Q [ a ] [ b ] [ c ] [ d ] te} {{λ te → Q-level [ a ] [ b ] [ c ] [ d ] te}} (λ e →
+        Trunc-elim {P = λ ta → Q ta tb tc td te} {{λ {ta} → Q-level ta tb tc td te}} (λ a →
+          Trunc-elim {P = λ tb → Q [ a ] tb tc td te} {{λ {tb} → Q-level [ a ] tb tc td te}} (λ b →
+            Trunc-elim {P = λ tc → Q [ a ] [ b ] tc td te} {{λ {tc} → Q-level [ a ] [ b ] tc td te}} (λ c →
+              Trunc-elim {P = λ td → Q [ a ] [ b ] [ c ] td te} {{λ {td} → Q-level [ a ] [ b ] [ c ] td te}} (λ d →
+                Trunc-elim {P = λ te → Q [ a ] [ b ] [ c ] [ d ] te} {{λ {te} → Q-level [ a ] [ b ] [ c ] [ d ] te}} (λ e →
                   let R = P [ a ] [ b ] [ c ] [ d ] [ e ]
                       R-level = P-level [ a ] [ b ] [ c ] [ d ] [ e ]
                   in λ tp tq tr ts →
-                  Trunc-elim {P = λ tp → R tp tq tr ts} {{λ tp → R-level tp tq tr ts }} (λ p →
-                    Trunc-elim {P = λ tq → R [ p ] tq tr ts} {{λ tq → R-level [ p ] tq tr ts}} (λ q →
-                      Trunc-elim {P = λ tr → R [ p ] [ q ] tr ts} {{λ tr → R-level [ p ] [ q ] tr ts}} (λ r →
-                        Trunc-elim {P = λ ts → R [ p ] [ q ] [ r ] ts} {{λ ts → R-level [ p ] [ q ] [ r ] ts}} (λ s →
+                  Trunc-elim {P = λ tp → R tp tq tr ts} {{λ {tp} → R-level tp tq tr ts}} (λ p →
+                    Trunc-elim {P = λ tq → R [ p ] tq tr ts} {{λ {tq} → R-level [ p ] tq tr ts}} (λ q →
+                      Trunc-elim {P = λ tr → R [ p ] [ q ] tr ts} {{λ {tr} → R-level [ p ] [ q ] tr ts}} (λ r →
+                        Trunc-elim {P = λ ts → R [ p ] [ q ] [ r ] ts} {{λ {ts} → R-level [ p ] [ q ] [ r ] ts}} (λ s →
                           core' p q r s
                         ) ts
                       ) tr
@@ -366,7 +366,7 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
       {P = λ ta → –> (=ₜ-equiv ta ta) idp
               == _∙ₜ_ {ta = ta} (–> (=ₜ-equiv ta ta) idp)
                                 (–> (=ₜ-equiv ta ta) idp)}
-      {{λ ta → raise-level _ $ =-preserves-level $ =ₜ-level ta ta}}
+      {{λ {ta} → raise-level _ $ =-preserves-level $ =ₜ-level ta ta}}
       (λ a → idp)
       ta
 
@@ -383,7 +383,7 @@ module _ {i} {n : ℕ₋₂} {A : Type i} where
     –>-=ₜ-equiv-pres-∙-coh {ta = ta} idp idp idp =
       Trunc-elim
         {P = λ ta → P ta ta ta ta idp idp idp}
-        {{λ ta → =ₛ-level $ raise-level (S (S n)) $ raise-level (S n) $ raise-level n $ =ₜ-level ta ta}}
+        {{λ {ta} → =ₛ-level $ raise-level (S (S n)) $ raise-level (S n) $ raise-level n $ =ₜ-level ta ta}}
         (λ a → =ₛ-in idp)
         ta
       where
@@ -404,10 +404,10 @@ module _ {i j} {n : ℕ₋₂} {A : Type i} {B : Type j} (f : A → B) where
     → a₀ =ₜ a₁ → Trunc-fmap f a₀ =ₜ Trunc-fmap f a₁
   =ₜ-fmap = Trunc-elim
     {P = λ a₀ → ∀ a₁ → a₀ =ₜ a₁ → Trunc-fmap f a₀ =ₜ Trunc-fmap f a₁}
-    {{λ a₀ → Π-level λ a₁ → Π-level λ _ → raise-level _ $ =ₜ-level (Trunc-fmap f a₀) (Trunc-fmap f a₁)}}
+    {{λ {a₀} → Π-level λ a₁ → Π-level λ _ → raise-level _ $ =ₜ-level (Trunc-fmap f a₀) (Trunc-fmap f a₁)}}
     (λ a₀ → Trunc-elim
       {P = λ a₁ → [ a₀ ] =ₜ a₁ → [ f a₀ ] =ₜ Trunc-fmap f a₁}
-      {{λ a₁ → Π-level λ _ → raise-level _ $ =ₜ-level [ f a₀ ] (Trunc-fmap f a₁)}}
+      {{λ {a₁} → Π-level λ _ → raise-level _ $ =ₜ-level [ f a₀ ] (Trunc-fmap f a₁)}}
       (λ a₁ → Trunc-fmap (ap f)))
 
 module _ {i j} {n : ℕ₋₂} {A : Type i} {B : Type j} (f : A → B) where
@@ -419,7 +419,7 @@ module _ {i j} {n : ℕ₋₂} {A : Type i} {B : Type j} (f : A → B) where
       {P = λ a
         →  –> (=ₜ-equiv (Trunc-fmap f a) (Trunc-fmap f a)) idp
         == =ₜ-fmap f a a (–> (=ₜ-equiv a a) idp)}
-      {{λ a → raise-level _ $ =-preserves-level $ =ₜ-level (Trunc-fmap f a) (Trunc-fmap f a)}}
+      {{λ {a} → raise-level _ $ =-preserves-level $ =ₜ-level (Trunc-fmap f a) (Trunc-fmap f a)}}
       (λ _ → idp)
       a₀
 
@@ -462,7 +462,7 @@ Trunc-fuse A m n = equiv
   (Trunc-rec ([_] ∘ [_]))
   (Trunc-elim (λ _ → idp))
   (Trunc-elim (Trunc-elim
-       {{λ _ → =-preserves-level (Trunc-preserves-level _ Trunc-level)}}
+       {{=-preserves-level (Trunc-preserves-level _ Trunc-level)}}
        (λ _ → idp)))
   where
       instance
@@ -482,7 +482,7 @@ Trunc-fuse-≤ A m≤n = equiv
   (Trunc-rec ([_] ∘ [_]))
   (Trunc-elim (λ _ → idp))
   (Trunc-elim (Trunc-elim
-       {{λ _ → =-preserves-level (Trunc-preserves-level _ Trunc-level)}}
+       {{=-preserves-level (Trunc-preserves-level _ Trunc-level)}}
        (λ _ → idp)))
 
 {- Truncating a binary product is equivalent to truncating its components -}

@@ -265,7 +265,7 @@ It’s a bit annoying to use, but it’s not used much (for now).
 -}
 
 record Lift {i j} (A : Type i) : Type (lmax i j) where
-  instance constructor lift
+  constructor lift
   field
     lower : A
 open Lift public

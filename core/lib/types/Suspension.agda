@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.NConnected
@@ -220,7 +220,7 @@ abstract
             {P = λ y → idp ==
               Trunc-rec (λ a → ap [_] (merid a)) y
               [ (λ z → [ north ] == [ z ]) ↓ (merid x) ]}
-            {{λ _ → ↓-preserves-level ⟨⟩}}
+            {{↓-preserves-level ⟨⟩}}
             (λ x' → ↓-cst=app-in (∙'-unit-l _ ∙ mers-eq n x x'))
             (contr-center cA))))
     where

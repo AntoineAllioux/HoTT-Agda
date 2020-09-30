@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.Equivalence2
@@ -317,10 +317,12 @@ module _ {i j} {G : Group i} {H : Group j} (φ : G →ᴳ H)
     module φ = GroupHom φ
 
     abstract
-      instance
-        image-prop : (h : H.El) → is-prop (hfiber φ.f h)
-        image-prop h = all-paths-is-prop λ {(g₁ , p₁) (g₂ , p₂) →
+      image-prop : (h : H.El) → is-prop (hfiber φ.f h)
+      image-prop h = all-paths-is-prop λ {(g₁ , p₁) (g₂ , p₂) →
           pair= (inj g₁ g₂ (p₁ ∙ ! p₂)) prop-has-all-paths-↓}
+    instance
+      image-prop-instance : {h : H.El} → is-prop (hfiber φ.f h)
+      image-prop-instance = image-prop _
 
   surjᴳ-and-injᴳ-is-equiv : is-equiv φ.f
   surjᴳ-and-injᴳ-is-equiv = contr-map-is-equiv

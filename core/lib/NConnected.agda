@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --rewriting #-}
+{-# OPTIONS --without-K --rewriting --overlapping-instances #-}
 
 open import lib.Basics
 open import lib.NType2
@@ -60,7 +60,7 @@ abstract
 
           g-f : ∀ k → g (f k) == k
           g-f k = λ= $ λ (b : B) →
-            Trunc-elim {{λ r → =-preserves-level {x = helper (k ∘ h) b r} (snd (P b))}}
+            Trunc-elim {{λ {r} → =-preserves-level {x = helper (k ∘ h) b r} (snd (P b))}}
                        (λ x → lemma (fst x) b (snd x)) (contr-center (c b))
             where
             lemma : ∀ xl → ∀ b → (p : h xl == b) →
@@ -191,26 +191,29 @@ prop-over-connected :  ∀ {i j} {A : Type i} {a : A} {{p : is-connected 0 A}}
 prop-over-connected P x = conn-extend (pointed-conn-out _ _) P (λ _ → x)
 
 {- Connectedness of a truncated type -}
+Trunc-preserves-conn : ∀ {i} {A : Type i} {n : ℕ₋₂} {m : ℕ₋₂}
+  → is-connected n A → is-connected n (Trunc m A)
+Trunc-preserves-conn {n = ⟨-2⟩} _ = Trunc-level
+Trunc-preserves-conn {A = A} {n = S n} {m} c = lemma (contr-center c) (contr-path c)
+  where
+  lemma : (x₀ : Trunc (S n) A) → (∀ x → x₀ == x) → is-connected (S n) (Trunc m A)
+  lemma = Trunc-elim
+    (λ a → λ p → has-level-in ([ [ a ] ] ,
+       Trunc-elim
+         (Trunc-elim
+           {{=-preserves-level
+                   (Trunc-preserves-level (S n) Trunc-level)}}
+           (λ x → <– (=ₜ-equiv [ [ a ] ] [ [ x ] ])
+              (Trunc-fmap (ap [_])
+                (–> (=ₜ-equiv [ a ] [ x ]) (p [ x ])))))))
+
 instance
-  Trunc-preserves-conn : ∀ {i} {A : Type i} {n : ℕ₋₂} {m : ℕ₋₂}
-    → is-connected n A → is-connected n (Trunc m A)
-  Trunc-preserves-conn {n = ⟨-2⟩} _ = Trunc-level
-  Trunc-preserves-conn {A = A} {n = S n} {m} c = lemma (contr-center c) (contr-path c)
-    where
-    lemma : (x₀ : Trunc (S n) A) → (∀ x → x₀ == x) → is-connected (S n) (Trunc m A)
-    lemma = Trunc-elim
-      (λ a → λ p → has-level-in ([ [ a ] ] ,
-        Trunc-elim
-          (Trunc-elim
-            {{λ _ → =-preserves-level
-                      (Trunc-preserves-level (S n) Trunc-level)}}
-            (λ x → <– (=ₜ-equiv [ [ a ] ] [ [ x ] ])
-               (Trunc-fmap (ap [_])
-                 (–> (=ₜ-equiv [ a ] [ x ]) (p [ x ])))))))
+  Trunc-preserves-conn-instance : ∀ {i} {A : Type i} {n : ℕ₋₂} {m : ℕ₋₂}
+    → {{is-connected n A}} → is-connected n (Trunc m A)
+  Trunc-preserves-conn-instance {{pA}} = Trunc-preserves-conn pA
 
 {- Connectedness of a Σ-type -}
 abstract
- instance
   Σ-conn : ∀ {i} {j} {A : Type i} {B : A → Type j} {n : ℕ₋₂}
     → is-connected n A → (∀ a → is-connected n (B a))
     → is-connected n (Σ A B)
@@ -240,14 +243,24 @@ abstract
     → is-connected n (A × B)
   ×-conn cA cB = Σ-conn cA (λ _ → cB)
 
+instance
+  Σ-conn-instance : ∀ {i} {j} {A : Type i} {B : A → Type j} {n : ℕ₋₂}
+    → {{is-connected n A}} → {{{a : A} → is-connected n (B a)}}
+    → is-connected n (Σ A B)
+  Σ-conn-instance {{pA}} {{pB}} = Σ-conn pA (λ _ → pB)
+
 {- connectedness of a path space -}
 abstract
- instance
   path-conn : ∀ {i} {A : Type i} {x y : A} {n : ℕ₋₂}
     → is-connected (S n) A → is-connected n (x == y)
   path-conn {x = x} {y = y} cA =
     equiv-preserves-level (=ₜ-equiv [ x ] [ y ])
       {{has-level-apply (contr-is-prop cA) [ x ] [ y ]}}
+
+instance
+  path-conn-instance : ∀ {i} {A : Type i} {x y : A} {n : ℕ₋₂}
+    → {{is-connected (S n) A}} → is-connected n (x == y)
+  path-conn-instance {{pA}} = path-conn pA
 
 {- an n-Type which is n-connected is contractible -}
 connected-at-level-is-contr : ∀ {i} {A : Type i} {n : ℕ₋₂}
