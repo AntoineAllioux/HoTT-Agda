@@ -9,10 +9,10 @@ Setup
 -----
 
 The code is loosely broken into `hott-core` and `hott-theorems` Agda libraries.
-You need Agda 2.5.3
-and include at least the path to `hott-core.agda-lib` in your Agda library list.
-See `CHANGELOG` of Agda 2.5 for more information.
-Support for Agda 2.5.4 or newer is currently lacking.
+This is a fork of the library that is compatible with Agda 2.6.1.
+To use, you need a recent version of Agda and to include at least the path to `hott-core.agda-lib` in your Agda library list.
+If you download using git remember to check out this branch e.g. using `git clone -b agda-2.6.1-compatible git@github.com:awswan/HoTT-Agda.git`.
+The content of `hott-theorems` is not working in this version of the library.
 
 Agda Options
 ------------
