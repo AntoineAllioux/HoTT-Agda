@@ -211,17 +211,17 @@ abstract
     → is-connected n A → is-connected (S n) (Susp A)
   Susp-conn {A = A} {n = n} cA = has-level-in
     ([ north ] ,
-     Trunc-elim
+     Trunc-elim ⦃ {!⟨⟩!} ⦄
        (Susp-elim
          idp
-         (Trunc-rec (λ a → ap [_] (merid a))
+         (Trunc-rec ⦃ {!!} ⦄ (λ a → ap [_] (merid a))
                     (contr-center cA))
          (λ x → Trunc-elim
             {P = λ y → idp ==
-              Trunc-rec (λ a → ap [_] (merid a)) y
+              Trunc-rec ⦃ {!!} ⦄ (λ a → ap [_] (merid a)) y
               [ (λ z → [ north ] == [ z ]) ↓ (merid x) ]}
-            {{↓-preserves-level ⟨⟩}}
-            (λ x' → ↓-cst=app-in (∙'-unit-l _ ∙ mers-eq n x x'))
+            {{↓-preserves-level {!!}}}
+            (λ x' → ↓-cst=app-in (∙'-unit-l _ ∙ mers-eq n ⦃ cA ⦄ x x'))
             (contr-center cA))))
     where
     instance _ = cA
@@ -230,9 +230,9 @@ abstract
       {{_ : is-connected n A}} → (x x' : A)
       → ap ([_] {n = S n}) (merid x)
         == Trunc-rec {{has-level-apply (Trunc-level {n = S n}) _ _}} (λ a → ap [_] (merid a)) [ x' ]
-    mers-eq ⟨-2⟩ x x' = contr-has-all-paths _ _
+    mers-eq ⟨-2⟩ x x' = contr-has-all-paths ⦃ {!!} ⦄ _ _
     mers-eq {A = A} (S n) x x' =
-      conn-extend (pointed-conn-out A x)
+      conn-extend (pointed-conn-out A x ⦃ {!!} ⦄)
         (λ y → ((ap [_] (merid x) == ap [_] (merid y)) ,
                 has-level-apply (has-level-apply (Trunc-level {n = S (S n)}) _ _) _ _))
         (λ _ → idp) x'

@@ -220,7 +220,10 @@ module _ {i j} {A : Type i} {B : A → Type j} {f g : Π A B} where
 
   abstract
     private
+      ◃idp' : {x : A} (q : g x == f x) → _◃_ {B = B} q idp == q
       ◃idp' = ◃idp {B = B}
+
+      idp▹' : {x : A} (q : g x == f x) → _▹_ {B = B} idp q == q
       idp▹' = idp▹ {B = B}
 
     ↓-=-in : {x y : A} {p : x == y} {u : g x == f x} {v : g y == f y}

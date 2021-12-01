@@ -184,10 +184,10 @@ module _ where
 
   λ=-equiv : ∀ {j} {P : A → Type j} {f g : Π A P}
     → (f ∼ g) ≃ (f == g)
-  λ=-equiv = (λ= , λ=-is-equiv) where
+  λ=-equiv {P = P} {f} {g} = (λ= , λ=-is-equiv) where
     abstract
-      λ=-is-equiv : is-equiv λ=
-      λ=-is-equiv = StrongFunextDep.λ=-is-equiv
+      λ=-is-equiv : is-equiv (λ= {P = P} {f} {g}) 
+      λ=-is-equiv =  StrongFunextDep.λ=-is-equiv 
 
   app=-equiv : ∀ {j} {P : A → Type j} {f g : Π A P}
     → (f == g) ≃ (f ∼ g)

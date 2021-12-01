@@ -97,7 +97,7 @@ module _ {i j k} {X : Ptd i} {Y : Ptd j} {Z : Ptd k} (⊙e : X ⊙≃ Y) where
   post⊙∘-is-equiv : is-equiv (λ (k : Z ⊙→ X) → ⊙–> ⊙e ⊙∘ k)
   post⊙∘-is-equiv = is-eq (⊙–> ⊙e ⊙∘_) (⊙<– ⊙e ⊙∘_) (to-from ⊙e) (from-to ⊙e) where
     abstract
-      to-from : ∀ {Y} (⊙e : X ⊙≃ Y) (k : Z ⊙→ Y) → ⊙–> ⊙e ⊙∘ (⊙<– ⊙e ⊙∘ k) == k
+      to-from : ∀ {Y} (⊙e : _⊙≃_ {j = j} X  Y) (k : Z ⊙→ Y) → ⊙–> ⊙e ⊙∘ (⊙<– ⊙e ⊙∘ k) == k
       to-from ((f , idp) , f-ise) (k , k-pt) = ⊙λ=' (f.f-g ∘ k) (↓-idf=cst-in' $ lemma k-pt)
         where
           module f = is-equiv f-ise
@@ -105,7 +105,7 @@ module _ {i j k} {X : Ptd i} {Y : Ptd j} {Z : Ptd k} (⊙e : X ⊙≃ Y) where
             → ⊙∘-pt f (⊙∘-pt f.g k-pt (f.g-f _)) idp == f.f-g y₀ ∙' k-pt
           lemma idp = ∙-unit-r _ ∙ f.adj _
 
-      from-to : ∀ {Y} (⊙e : X ⊙≃ Y) (k : Z ⊙→ X) → ⊙<– ⊙e ⊙∘ (⊙–> ⊙e ⊙∘ k) == k
+      from-to : ∀ {Y} (⊙e : _⊙≃_ {j = j} X Y) (k : Z ⊙→ X) → ⊙<– ⊙e ⊙∘ (⊙–> ⊙e ⊙∘ k) == k
       from-to ((f , idp) , f-ise) (k , idp) = ⊙λ=' (f.g-f ∘ k) $ ↓-idf=cst-in' idp
         where module f = is-equiv f-ise
 
@@ -113,13 +113,13 @@ module _ {i j k} {X : Ptd i} {Y : Ptd j} {Z : Ptd k} (⊙e : X ⊙≃ Y) where
   post⊙∘-equiv = _ , post⊙∘-is-equiv
 
   pre⊙∘-is-equiv : is-equiv (λ (k : Y ⊙→ Z) → k ⊙∘ ⊙–> ⊙e)
-  pre⊙∘-is-equiv = is-eq (_⊙∘ ⊙–> ⊙e) (_⊙∘ ⊙<– ⊙e) (to-from ⊙e) (from-to ⊙e) where
+  pre⊙∘-is-equiv = is-eq (_⊙∘ ⊙–> ⊙e) (_⊙∘ ⊙<– ⊙e) (to-from {Z = Z} ⊙e) (from-to {Z = Z} ⊙e) where
     abstract
-      to-from : ∀ {Z} (⊙e : X ⊙≃ Y) (k : X ⊙→ Z) → (k ⊙∘ ⊙<– ⊙e) ⊙∘ ⊙–> ⊙e == k
+      to-from : ∀ {Z} (⊙e : X ⊙≃ Y) (k : _⊙→_ {i} {k} X Z) → (k ⊙∘ ⊙<– ⊙e) ⊙∘ ⊙–> ⊙e == k
       to-from ((f , idp) , f-ise) (k , idp) = ⊙λ=' (ap k ∘ f.g-f) $ ↓-idf=cst-in' $ ∙-unit-r _
         where module f = is-equiv f-ise
 
-      from-to : ∀ {Z} (⊙e : X ⊙≃ Y) (k : Y ⊙→ Z) → (k ⊙∘ ⊙–> ⊙e) ⊙∘ ⊙<– ⊙e == k
+      from-to : ∀ {Z} (⊙e : X ⊙≃ Y) (k : _⊙→_ {j} {k} Y Z) → (k ⊙∘ ⊙–> ⊙e) ⊙∘ ⊙<– ⊙e == k
       from-to ((f , idp) , f-ise) (k , idp) = ⊙λ=' (ap k ∘ f.f-g) $ ↓-idf=cst-in' $
         ∙-unit-r _ ∙ ap-∘ k f (f.g-f (pt X)) ∙ ap (ap k) (f.adj (pt X))
         where module f = is-equiv f-ise
