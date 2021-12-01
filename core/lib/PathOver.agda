@@ -380,10 +380,13 @@ module _ {i j k} {A : Type i} {B : Type j} {C : Type k} (f : A → C) (g : B →
       → p ∙ ! q ∙ ! (! r ∙ p ∙ ! q) == r
     coh idp idp idp = idp
 
-
 transp-↓ : ∀ {i j} {A : Type i} (P : A → Type j) {a₁ a₂ : A}
-  (p : a₁ == a₂) (y : P a₂) → transport P (! p) y == y [ P ↓ p ]
+  (p : a₁ == a₂) (y : P a₁) → y == transport P p y [ P ↓ p ]
 transp-↓ _ idp _ = idp
+
+transp-↓-! : ∀ {i j} {A : Type i} (P : A → Type j) {a₁ a₂ : A}
+  (p : a₁ == a₂) (y : P a₂) → transport P (! p) y == y [ P ↓ p ]
+transp-↓-! _ idp _ = idp
 
 transp-ap-↓ : ∀ {i j k} {A : Type i} {B : Type j} (P : B → Type k) (h : A → B)
   {a₁ a₂ : A} (p : a₁ == a₂) (y : P (h a₂))

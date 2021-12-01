@@ -185,7 +185,7 @@ instance
         g (b , s) = (is-equiv.g e b , transport P (! (is-equiv.f-g e b)) s)
 
         f-g : ∀ y → f (g y) == y
-        f-g (b , s) = pair= (is-equiv.f-g e b) (transp-↓ P (is-equiv.f-g e b) s)
+        f-g (b , s) = pair= (is-equiv.f-g e b) (transp-↓-! P (is-equiv.f-g e b) s)
 
         g-f : ∀ x → g (f x) == x
         g-f (a , r) =
