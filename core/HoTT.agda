@@ -8,10 +8,10 @@ open import lib.Equivalence2 public
 open import lib.NConnected public
 open import lib.NType2 public
 open import lib.Relation2 public
+open import lib.types.Types public
 open import lib.Function2 public
 {-
 open import lib.cubical.Cubical public
-open import lib.types.Types public
 open import lib.groups.Groups public
 open import lib.groupoids.Groupoids public
 open import lib.modalities.Modalities public
