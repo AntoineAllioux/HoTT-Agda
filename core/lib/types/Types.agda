@@ -13,6 +13,8 @@ open import lib.types.Cospan public
 open import lib.types.Cover public
 open import lib.types.Empty public
 open import lib.types.Fin public
+open import lib.types.Lift public
+open import lib.types.List public
 open import lib.types.Nat public
 open import lib.types.Pi public
 open import lib.types.SetQuotient public
@@ -38,7 +40,6 @@ open import lib.types.Int public
 open import lib.types.IteratedSuspension public
 open import lib.types.Join public
 open import lib.types.Lift public
-open import lib.types.List public
 open import lib.types.LoopSpace public
 open import lib.types.Modality public
 open import lib.types.PathSet public
