@@ -16,6 +16,7 @@ open import lib.types.Fin public
 open import lib.types.Lift public
 open import lib.types.List public
 open import lib.types.Nat public
+open import lib.types.Paths public
 open import lib.types.Pi public
 open import lib.types.SetQuotient public
 open import lib.types.Sigma public
@@ -43,7 +44,6 @@ open import lib.types.Lift public
 open import lib.types.LoopSpace public
 open import lib.types.Modality public
 open import lib.types.PathSet public
-open import lib.types.Paths public
 open import lib.types.Pointed public
 open import lib.types.Pullback public
 open import lib.types.Pushout public
